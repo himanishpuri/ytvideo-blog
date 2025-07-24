@@ -9,10 +9,10 @@ def setup_venv():
     venv_path = Path("venv")
     
     if not venv_path.exists():
-        print("📦 Creating virtual environment...")
+        print("Creating virtual environment...")
         result = subprocess.run([sys.executable, "-m", "venv", "venv"])
         if result.returncode != 0:
-            print("❌ Failed to create virtual environment")
+            print("Failed to create virtual environment")
             return False
     
     if os.name == 'nt':  # Windows
@@ -21,54 +21,54 @@ def setup_venv():
         activate_script = venv_path / "bin" / "activate"
     
     if not activate_script.exists():
-        print("❌ Virtual environment activation script not found")
+        print("Virtual environment activation script not found")
         return False
     
-    print("✅ Virtual environment ready")
+    print("Virtual environment ready")
     return str(activate_script)
 
 def install_dependencies(python_path):
-    print("📋 Checking dependencies...")
+    print("Checking dependencies...")
     
     result = subprocess.run([python_path, "-c", "import fastapi, streamlit"], 
                           capture_output=True, text=True)
     
     if result.returncode != 0:
-        print("📥 Installing dependencies...")
+        print("Installing dependencies...")
         install_result = subprocess.run([python_path, "-m", "pip", "install", "-r", "requirements.txt"])
         if install_result.returncode != 0:
-            print("❌ Failed to install dependencies")
+            print("Failed to install dependencies")
             return False
     
-    print("✅ Dependencies ready")
+    print("Dependencies ready")
     return True
 
 def check_ollama():
     try:
         result = subprocess.run(['ollama', 'list'], capture_output=True, text=True)
         if 'llama3.2' not in result.stdout:
-            print("⚠️  Warning: llama3.2 model not found. Installing...")
+            print("Warning: llama3.2 model not found. Installing...")
             subprocess.run(['ollama', 'pull', 'llama3.2'])
         return True
     except FileNotFoundError:
-        print("❌ Ollama not found. Please install Ollama first.")
-        print("   Visit: https://ollama.ai/")
+        print("Ollama not found. Please install Ollama first.")
+        print("Visit: https://ollama.ai/")
         return False
 
 def start_backend(python_path):
-    print("🚀 Starting FastAPI backend on port 8001...")
+    print("Starting FastAPI backend on port 8001...")
     return subprocess.Popen([
         python_path, '-m', 'fastapi', 'run', 'stream.py', '--port', '8001'
     ], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
 def start_frontend(python_path):
-    print("🎨 Starting Streamlit frontend...")
+    print("Starting Streamlit frontend...")
     return subprocess.Popen([
         python_path, '-m', 'streamlit', 'run', 'frontend.py', '--server.port', '8501'
     ], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
 def main():
-    print("🎥 YouTube to Blog MVP Startup")
+    print("YouTube to Blog MVP Startup")
     print("=" * 40)
     
     # Setup virtual environment
@@ -84,17 +84,17 @@ def main():
     
     try:
         backend_process = start_backend(python_path)
-        print("✅ Backend starting...")
+        print("Backend starting...")
         time.sleep(5) 
         
         frontend_process = start_frontend(python_path)
-        print("✅ Frontend starting...")
+        print("Frontend starting...")
         time.sleep(5)  # Give frontend time to start
         
-        print("\n🌟 MVP is now running!")
-        print("📝 Frontend: http://localhost:8501")
-        print("🔧 Backend API: http://localhost:8001")
-        print("📚 API Docs: http://localhost:8001/docs")
+        print("\nMVP is now running!")
+        print("Frontend: http://localhost:8501")
+        print("Backend API: http://localhost:8001")
+        print("API Docs: http://localhost:8001/docs")
         print("\nPress Ctrl+C to stop both services")
         
         webbrowser.open("http://localhost:8501")
@@ -102,13 +102,13 @@ def main():
         try:
             backend_process.wait()
         except KeyboardInterrupt:
-            print("\n🛑 Shutting down services...")
+            print("\nShutting down services...")
             backend_process.terminate()
             frontend_process.terminate()
-            print("✅ Services stopped successfully")
+            print("Services stopped successfully")
             
     except Exception as e:
-        print(f"❌ Error starting services: {e}")
+        print(f"Error starting services: {e}")
         return
 
 if __name__ == "__main__":
