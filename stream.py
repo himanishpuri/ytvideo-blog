@@ -8,7 +8,6 @@ from agents.blog_writer import writer_chain
 
 app = FastAPI(title="YouTube to Blog API", description="Convert YouTube videos to blog posts")
 
-# Add CORS middleware to allow Streamlit to connect
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -17,7 +16,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Request models
 class VideoRequest(BaseModel):
     video_url: str
 
@@ -34,7 +32,8 @@ async def read_root():
         "endpoints": {
             "health": "/health",
             "generate_blog": "/generate-blog",
-            "docs": "/docs"
+            "docs": "/docs",
+            "test-transcript": "/test-transcript/{video_id}"
         }
     }
 
@@ -48,28 +47,21 @@ async def health_check():
 
 @app.post("/generate-blog", response_model=BlogResponse)
 async def generate_blog(request: VideoRequest):
-    """
-    Generate a blog post from a YouTube video URL
-    """
     start_time = datetime.datetime.now()
     
     try:
-        # Step 1: Extract transcript
         print(f"[INFO] Extracting transcript from: {request.video_url}")
         transcript = get_transcript(request.video_url)
         
         if not transcript:
             raise HTTPException(status_code=400, detail="Could not extract transcript from the video")
         
-        # Step 2: Generate outline
         print("[INFO] Generating blog outline...")
         outline = researcher_chain.invoke({"transcript": transcript})
         
-        # Step 3: Generate full blog post
         print("[INFO] Generating full blog post...")
         blog_content = writer_chain.invoke({"outline": outline, "transcript": transcript})
         
-        # Calculate processing time
         end_time = datetime.datetime.now()
         processing_time = (end_time - start_time).total_seconds()
         
@@ -91,9 +83,6 @@ async def generate_blog(request: VideoRequest):
 
 @app.get("/test-transcript/{video_id}")
 async def test_transcript(video_id: str):
-    """
-    Test endpoint to check if transcript is available for a video
-    """
     try:
         video_url = f"https://www.youtube.com/watch?v={video_id}"
         transcript = get_transcript(video_url)

@@ -1,4 +1,3 @@
-# run_mvp.py - Startup script for the MVP
 import subprocess
 import sys
 import time
@@ -7,7 +6,6 @@ import os
 from pathlib import Path
 
 def setup_venv():
-    """Setup and activate virtual environment"""
     venv_path = Path("venv")
     
     if not venv_path.exists():
@@ -17,10 +15,9 @@ def setup_venv():
             print("❌ Failed to create virtual environment")
             return False
     
-    # Determine the correct activation script path
     if os.name == 'nt':  # Windows
         activate_script = venv_path / "Scripts" / "activate"
-    else:  # Unix/Linux/MacOS
+    else:  # Linux
         activate_script = venv_path / "bin" / "activate"
     
     if not activate_script.exists():
@@ -31,10 +28,8 @@ def setup_venv():
     return str(activate_script)
 
 def install_dependencies(python_path):
-    """Install required dependencies in virtual environment"""
     print("📋 Checking dependencies...")
     
-    # Check if key packages are installed
     result = subprocess.run([python_path, "-c", "import fastapi, streamlit"], 
                           capture_output=True, text=True)
     
@@ -49,7 +44,6 @@ def install_dependencies(python_path):
     return True
 
 def check_ollama():
-    """Check if Ollama is running and has the required model"""
     try:
         result = subprocess.run(['ollama', 'list'], capture_output=True, text=True)
         if 'llama3.2' not in result.stdout:
@@ -62,14 +56,12 @@ def check_ollama():
         return False
 
 def start_backend(python_path):
-    """Start the FastAPI backend"""
     print("🚀 Starting FastAPI backend on port 8001...")
     return subprocess.Popen([
         python_path, '-m', 'fastapi', 'run', 'stream.py', '--port', '8001'
     ], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
 def start_frontend(python_path):
-    """Start the Streamlit frontend"""
     print("🎨 Starting Streamlit frontend...")
     return subprocess.Popen([
         python_path, '-m', 'streamlit', 'run', 'frontend.py', '--server.port', '8501'
@@ -84,24 +76,20 @@ def main():
     if not python_path:
         return
     
-    # Install dependencies
     if not install_dependencies(python_path):
         return
     
-    # Check prerequisites
     if not check_ollama():
         return
     
     try:
-        # Start backend
         backend_process = start_backend(python_path)
         print("✅ Backend starting...")
-        time.sleep(3)  # Give backend time to start
+        time.sleep(5) 
         
-        # Start frontend
         frontend_process = start_frontend(python_path)
         print("✅ Frontend starting...")
-        time.sleep(3)  # Give frontend time to start
+        time.sleep(5)  # Give frontend time to start
         
         print("\n🌟 MVP is now running!")
         print("📝 Frontend: http://localhost:8501")
@@ -109,10 +97,8 @@ def main():
         print("📚 API Docs: http://localhost:8001/docs")
         print("\nPress Ctrl+C to stop both services")
         
-        # Auto-open browser
         webbrowser.open("http://localhost:8501")
         
-        # Wait for user interrupt
         try:
             backend_process.wait()
         except KeyboardInterrupt:
