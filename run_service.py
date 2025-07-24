@@ -71,7 +71,6 @@ def main():
     print("YouTube to Blog MVP Startup")
     print("=" * 40)
     
-    # Setup virtual environment
     python_path = setup_venv()
     if not python_path:
         return
@@ -89,7 +88,7 @@ def main():
         
         frontend_process = start_frontend(python_path)
         print("Frontend starting...")
-        time.sleep(5)  # Give frontend time to start
+        time.sleep(5) 
         
         print("\nMVP is now running!")
         print("Frontend: http://localhost:8501")

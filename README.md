@@ -52,7 +52,7 @@ Frontend (Streamlit) → Backend (FastAPI) → LangChain → Ollama (llama3.2)
 .\start_mvp.ps1
 
 # Cross-platform Python script
-python run_mvp.py
+python run_service.py
 ```
 
 #### Option 2: Manual Setup
@@ -131,7 +131,7 @@ The automated scripts ensure:
 ```
 ├── frontend.py              # Streamlit frontend
 ├── stream.py               # FastAPI backend
-├── run_mvp.py             # Python startup script
+├── run_service.py             # Python startup script
 ├── start_mvp.ps1          # PowerShell startup script
 ├── main.py                # CLI version (existing)
 ├── requirements.txt       # Dependencies
