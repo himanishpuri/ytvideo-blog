@@ -43,18 +43,6 @@ def install_dependencies(python_path):
     print("Dependencies ready")
     return True
 
-def check_ollama():
-    try:
-        result = subprocess.run(['ollama', 'list'], capture_output=True, text=True)
-        if 'llama3.2' not in result.stdout:
-            print("Warning: llama3.2 model not found. Installing...")
-            subprocess.run(['ollama', 'pull', 'llama3.2'])
-        return True
-    except FileNotFoundError:
-        print("Ollama not found. Please install Ollama first.")
-        print("Visit: https://ollama.ai/")
-        return False
-
 def start_backend(python_path):
     print("Starting FastAPI backend on port 8001...")
     return subprocess.Popen([
@@ -76,9 +64,6 @@ def main():
         return
     
     if not install_dependencies(python_path):
-        return
-    
-    if not check_ollama():
         return
     
     try:
