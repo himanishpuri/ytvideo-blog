@@ -142,7 +142,7 @@ with st.sidebar:
     
     ### Requirements
     - FastAPI backend running on port 8001
-    - Ollama with llama3.2 model
+    - Ollama with llama3.2 model or Gemini
     - Valid YouTube video with available transcript
     """)
     
