@@ -30,13 +30,7 @@ def setup_venv():
 def install_dependencies(python_path):
     print("Checking dependencies...")
     
-    result = subprocess.run([python_path, "-c", "import fastapi, streamlit"], 
-                          capture_output=True, text=True)
-    
-    if result.returncode != 0:
-        print("Installing dependencies...")
-        install_result = subprocess.run([python_path, "-m", "pip", "install", "-r", "requirements.txt"])
-        if install_result.returncode != 0:
+    if install_result.returncode != 0:
             print("Failed to install dependencies")
             return False
     
